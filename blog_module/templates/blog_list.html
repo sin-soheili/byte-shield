@@ -1,0 +1,145 @@
+{% extends "shared/main.html" %}
+{% load poll_extras %}
+{% load render_partial %}
+{% load jformat %}
+{% block title %}وبلاگ{% endblock %}
+
+{% block content %}
+
+    <div class="clearfix"></div>
+
+    <section class="container-fluid bkg p-0">
+        <div class="row">
+            <div class="col-lg-12 p-0 mb-3">
+                <div class="bg-package d-flex align-items-center justify-content-center">
+                    <div class="breadcrumb radius15">
+                        <ul class="">
+                            <li><a href="{% url 'home:main' %}">خانه / </a></li>
+                            <li><a href="{% url 'blog:blog_list' %}" class="current">وبلاگ</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container mb-4">
+        <div class="row">
+
+            <div class="col-xl-3 order-xl-1 pt-3 order-1 mb-3">
+
+                <div class="d-flex align-items-center justify-content-center mb-3 bg-title-sidebar p-2 radius15">
+                    
+                    <h3 class="mr-3">دسته بندی</h3>
+                </div>
+
+                <div class="card side-category p-4 mb-3">
+                    <ul class="list-unstyled">
+                        {% render_partial "blog_module.views.blog_categories_component" %}
+                    </ul>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center mb-3 mt-3 bg-title-sidebar p-2 radius15">
+                    
+                    <h3 class="mr-3">جدیدترین مقالات</h3>
+                </div>
+
+                <div class="card thumb-post p-4 mb-3">
+
+                    <ul>
+                        {% for post in new_post %}
+                            <li class="my-1">
+                                <div class="d-flex align-items-center justify-content-evenly">
+                                    <a href="{% url 'blog:blog_detail' post.id %}"><img src="{{ post.image.url }}"/></a>
+                                    <div class="mr-2">
+                                        <p>
+                                            <a href="{% url 'blog:blog_detail' post.id %}">{{ post.title | truncatewords:4 }}</a>
+                                        </p>
+                                        <p>{{ post.created_date | jformat:"%Y/%m/%d" }}</p>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <div class="col-xl-9 order-xl-0 pl-4 order-0 mb-3">
+
+                <div class="row">
+                    {% for post in blog %}
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card p-3 mb-3 carding-blog overlyblog">
+                                <a href="{% url 'blog:blog_detail' post.id %}">
+                                    <img src="{{ post.image.url }}" alt="Card image">
+                                </a>
+                                <div class="p_relative">
+                                    <h5 class="mt-5 YekanBakhFaNum-Bold"><a href="{% url 'blog:blog_detail' post.id %}">
+                                        {{ post.title }}
+                                    </a></h5>
+                                    <div class="d-flex justify-content-center">
+                                        <a class="cateblog d-flex justify-content-center align-items-center" href="#">
+
+                                        
+                                            <span class="mr-2 YekanBakhFaNum-SemiBold">{{ post.category }}</span>
+
+                                        </a>
+                                    </div>
+
+                                    <p>{{ post.description | truncatewords:4 }}</p>
+                                    <div class="d-flex align-items-center justify-content-end mt-3 px-2">
+                                        <a class="d-flex justify-content-center align-items-center"
+                                           href="{% url "blog:blog_detail" post.id %}">
+                                            <span class="ml-2 show-more">ادامه مطلب</span>
+                                            <svg width="12" height="11" viewBox="0 0 12 11" fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M10.8019 6.17453H2.56566C2.00285 6.17453 1.53613 5.70782 1.53613 5.14501C1.53613 4.5822 2.00285 4.11548 2.56566 4.11548H10.8019C11.3647 4.11548 11.8314 4.5822 11.8314 5.14501C11.8314 5.70782 11.3647 6.17453 10.8019 6.17453Z"
+                                                      fill="#222"/>
+                                                <path d="M5.31096 10.2918C5.05014 10.2918 4.78933 10.1958 4.58342 9.98985L0.465311 5.87174C0.067227 5.47366 0.067227 4.81476 0.465311 4.41667L4.58342 0.298563C4.98151 -0.099521 5.64041 -0.099521 6.03849 0.298563C6.43657 0.696647 6.43657 1.35554 6.03849 1.75363L2.64791 5.14421L6.03849 8.53479C6.43657 8.93287 6.43657 9.59177 6.03849 9.98985C5.83258 10.1958 5.57177 10.2918 5.31096 10.2918Z"
+                                                      fill="#222"/>
+                                            </svg>
+                                        </a>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-12 text-center mx-auto">
+                        {% if blog %}
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item"><a class="page-link"
+                                                             href="?page={{ page_obj.previous_page_number }}">قبلی</a>
+                                    </li>
+                                {% endif %}
+                                {% for pageNumber in paginator.page_range %}
+                                    <li class="page-item {% if page_obj.number == pageNumber %} active {% endif %}"><a
+                                            class="page-link"
+                                            href="?page={{ pageNumber }}">{{ pageNumber }}</a></li>
+                                {% endfor %}
+                                {% if page_obj.has_next %}
+                                    <li class="page-item"><a class="page-link"
+                                                             href="?page={{ page_obj.next_page_number }}">بعدی</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+
+{% endblock %}

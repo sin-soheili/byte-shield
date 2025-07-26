@@ -1,0 +1,121 @@
+{% extends 'shared/main.html' %}
+{% load poll_extras %}
+{% block title %}سبد خرید{% endblock %}
+
+
+{% block content %}
+    <div class="clearfix"></div>
+
+    <section class="container-fluid bkg p-0">
+        <div class="row">
+            <div class="col-lg-12 p-0 mb-3">
+                <div class="bg-package d-flex align-items-center justify-content-center">
+                    <div class="breadcrumb radius15">
+                        <ul class="">
+                            <li><a href="#">خانه / </a></li>
+                            <li><a href="#" class="current">سبد خرید</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="order-detail-content">
+        <section class="container mb-4" id="carts">
+            <div class="row">
+                <div class="col-xl-4 order-xl-1 pt-3 order-1 mb-3">
+
+                    <div class="card side-category p-4 mb-3">
+                        <ul class="list-unstyled">
+
+                            <li class="p-3 bg-title-sidebar radius15">مجموع سبد خرید:
+
+                                <div class="d-flex align-items-center justify-content-center">
+                                    {{ sum | three_digits }} تومان
+                                </div>
+
+                            </li>
+                        </ul>
+                        <li>
+                            هزینه این سفارش هنوز پرداخـت نشده و در صورت اتمــام موجــودی
+                            کالا ها از سبد خرید شما حدف می شوند.
+                        </li>
+                        {% if order.orderdetail_set.all %}
+                            <a class="a-button radius55 py-2 px-4 text-center mt-3" href="{% url 'order:checkout' %}">
+                                <span class="ml-2">ثبت سفارش و پرداخت</span>
+                            </a>
+                        {% else %}
+
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-xl-8 order-xl-0 order-0 mb-3">
+
+                    <div class="card m-3 p-4">
+                        {% if order.orderdetail_set.all %}
+                            <div class="item">
+                                {% for item in order.orderdetail_set.all %}
+                                    <div class="d-flex align-items-center justify-content-between mb-cart cart-res"
+                                         id="items">
+                                        <div class="col-lg-3">
+                                            <img src="{{ item.product.image.url }}" alt="">
+                                        </div>
+                                        <div class="col-lg-3">{{ item.product.name }}</div>
+                                        <div class="col-lg-3">{{ item.get_total_price | three_digits }} تومان</div>
+                                        <div class="col-lg-3">
+                                            <div class="input-group d-flex align-items-center justify-content-center cart-increment radius20">
+
+                                                    <span class="input-group-btn">
+                                                        <button type="button"
+                                                                onclick="changeOrderDetialCount({{ item.id }}, 'increase')"
+                                                                class="quantity-right-plus btn "
+                                                                data-type="plus" data-field="">
+                                                            <i class="fas fa-plus text-warning"></i>
+                                                        </button>
+                                                    </span>
+
+                                                <input type="text" id="quantity" name="quantity"
+                                                       class="input-cart form-control input-number"
+                                                       value="{{ item.count }}"
+                                                       min="1"
+                                                       max="100">
+
+                                                <span class="input-group-btn">
+                                                        <button type="button"
+                                                                onclick="changeOrderDetialCount({{ item.id }}, 'decrease')"
+                                                                class="quantity-left-minus btn p-3"
+                                                                data-type="minus" data-field="">
+                                                            <i class="fas fa-minus text-warning"></i>
+                                                        </button>
+                                                    </span>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+                        {% else %}
+                            <h4 class="text-center text-muted ">سبد خرید شما خالی میباشد</h4>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </div>
+        {% for message in messages %}
+                    <p class="text-center">{{ message }}</p>
+                {% endfor %}
+<form method="post" class="block mx-auto">
+                {% csrf_token %}
+                <input type="text" name="discount" placeholder="کد تخفیف" class="d-block mx-auto input-cart form-control input-number w-auto rounded">
+                    <button type="submit" class="a-button radius55 px-4 text-center mt-3 d-block mx-auto ">اعمال</button>
+
+</form>
+        </section>
+    </div>
+
+{% endblock %}
