@@ -27,9 +27,10 @@ more_counter.short_description = "موجود کردن"
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'price', 'category', 'count', 'is_active']
-    list_editable = ['is_active', 'count']
+    list_display = ['name', 'price', 'category', 'is_active'] 
+    list_editable = ['is_active']
     actions = [zero_counter, more_counter]
+    exclude = ['count'] 
 
 
 @admin.register(ProductComment)
